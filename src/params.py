@@ -11,10 +11,10 @@ Institution: The University of British Columbia.
 # ####################### Eye tracker type and path ##############################################################
 
 # the folder that has the files exported from eye trackers
-EYELOGDATAFOLDER = "./sampledata"
+EYELOGDATAFOLDER = "./customData"
 
 # the folder that has the external log files
-EXTERNALLOGDATAFOLDER = "./sampledata/external logs"
+EXTERNALLOGDATAFOLDER = "./customData/external logs"
 
 # the eye tracker and/or software used to collect and export the data
 #EYETRACKERTYPE = "TobiiV2" #Tobii Studio version 1x and 2x
@@ -102,7 +102,7 @@ aoigeneralfeat = ['fixationrate','numfixations','totaltimespent','proportionnum'
                   'timetofirstleftclic', 'timetofirstrightclic', 'timetofirstdoubleclic', 'timetolastleftclic', 'timetolastrightclic', 'timetolastdoubleclic']
 
 #list of the AOI names
-aoinames = ['Top','Bottom','Graph','Toolbar']
+aoinames = []
 
 #list of transition-based AOI features (count)
 aoitransfrom = map(lambda x:'numtransfrom_'+x, aoinames)

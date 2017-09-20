@@ -85,7 +85,7 @@ class BasicParticipant(Participant):
 		    	
         self.features={}
         if params.EYETRACKERTYPE == "TobiiV2":
-            rec = TobiiRecording(datafile, fixfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
+            rec = TobiiV2Recording(datafile, fixfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         elif params.EYETRACKERTYPE == "TobiiV3":
             rec = TobiiV3Recording(datafile, fixfile, saccade_file=saccfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         elif params.EYETRACKERTYPE == "SMI":
@@ -102,6 +102,9 @@ class BasicParticipant(Participant):
 			
         if aoifile is not None:
             aois = read_aois(aoifile)
+            params.aoinames = []
+            for aoi in aois:
+                params.aoinames.append(aoi.aid)
         else:
             aois = None
         
@@ -201,7 +204,7 @@ def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, ao
             segfile = "{dir}/SMI_Sample_{rec}.seg".format(dir=datadir, rec=rec)
 
         if os.path.exists(allfile):
-            p = BasicParticipant(rec, evefile, allfile, fixfile, sacfile, segfile, log_time_offset = offset, 
+            p = BasicParticipant(rec, evefile, allfile, fixfile, sacfile, segfile, log_time_offset = offset,
                                 aoifile=aoifile, prune_length = prune_length, require_valid_segs = require_valid_segs,
                                 auto_partition_low_quality_segments = auto_partition_low_quality_segments, rpsdata = currpsdata)
             participants.append(p)
