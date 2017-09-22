@@ -87,7 +87,7 @@ class BasicParticipant(Participant):
         if params.EYETRACKERTYPE == "TobiiV2":
             rec = TobiiV2Recording(datafile, fixfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         elif params.EYETRACKERTYPE == "TobiiV3":
-            rec = TobiiV3Recording(datafile, fixfile, saccade_file=saccfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
+            rec = TobiiV3Recording(datafile, fixfile, participantName=self.pid, saccade_file=saccfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         elif params.EYETRACKERTYPE == "SMI":
             rec = SMIRecording(datafile, fixfile, saccade_file=saccfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         else:
@@ -191,11 +191,11 @@ def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, ao
             sacfile = None
             segfile = datadir+'/P'+str(rec)+'.seg'
         elif params.EYETRACKERTYPE == "TobiiV3":
-            allfile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            fixfile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            sacfile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            evefile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            segfile = "{dir}/TobiiV3_sample_{rec}.seg".format(dir=datadir, rec=rec)
+            allfile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
+            fixfile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
+            sacfile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
+            evefile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
+            segfile = "{dir}/TobiiV3_sample.seg".format(dir=datadir, rec=rec)
         elif params.EYETRACKERTYPE == "SMI":
             allfile = "{dir}/SMI_Sample_{rec}_Samples.txt".format(dir=datadir, rec=rec)
             fixfile = "{dir}/SMI_Sample_{rec}_Events.txt".format(dir=datadir, rec=rec)

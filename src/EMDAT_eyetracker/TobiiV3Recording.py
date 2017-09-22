@@ -33,6 +33,8 @@ class TobiiV3Recording(Recording):
             last_time = -1
 			
             for row in reader:
+                if self.participantName != row["ParticipantName"]:
+                    continue
                 if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
                     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"]: #ignore data point with no validity information
@@ -72,6 +74,8 @@ class TobiiV3Recording(Recording):
             currentfix = 0
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
+                if self.participantName != row["ParticipantName"]:
+                    continue
                 if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
                     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"] or not row["FixationPointX (MCSpx)"] or not row["FixationPointY (MCSpx)"]: #ignore data point with no information
@@ -113,6 +117,8 @@ class TobiiV3Recording(Recording):
             nb_sample = 0
             
             for row in reader:
+                if self.participantName != row["ParticipantName"]:
+                    continue
                 if row["MediaName"] != 'ScreenRec' or not row["EyeTrackerTimestamp"]:  # ignore non-recording data point
                     continue
                     
@@ -212,6 +218,8 @@ class TobiiV3Recording(Recording):
         with open(event_file, 'r') as f:
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
+                if self.participantName != row["ParticipantName"]:
+                    continue
                 if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
                     continue
                 if row["MouseEventIndex"] : #mouse event

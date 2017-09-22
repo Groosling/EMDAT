@@ -15,7 +15,7 @@ from EMDAT_core.ValidityProcessing import output_Validity_info_Segments, output_
 
 if __name__ == '__main__':
     freeze_support() #for windows
-    ul =        [15]    # list of user recordings (files extracted for one participant from Tobii studio)
+    ul =        ["tester15"]    # list of user recordings (files extracted for one participant from Tobii studio)
     uids =      [15]    # User ID that is used in the external logs (can be different from above but there should be a 1-1 mapping)
 
     alogoffset = [0, 0]    # the time sifference between the eye tracker logs and the external log
