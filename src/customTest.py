@@ -15,19 +15,19 @@ from EMDAT_core.ValidityProcessing import output_Validity_info_Segments, output_
 
 if __name__ == '__main__':
     freeze_support() #for windows
-    ul =        ["tester15"]    # list of user recordings (files extracted for one participant from Tobii studio)
-    uids =      [15]    # User ID that is used in the external logs (can be different from above but there should be a 1-1 mapping)
+    ul =        ["Adam Bacho", "tester15", "tester23", "tester24"]    # list of user recordings (files extracted for one participant from Tobii studio)
+    uids =      [7, 15, 23, 24]    # User ID that is used in the external logs (can be different from above but there should be a 1-1 mapping)
 
-    alogoffset = [0, 0]    # the time sifference between the eye tracker logs and the external log
+    alogoffset = [0, 0, 0, 0]    # the time sifference between the eye tracker logs and the external log
 
     ###### Read participants
-    nbprocess = cpu_count()
+    nbprocess = 1
     ps = read_participants_Basic_multiprocessing(nbprocess, user_list = ul,pids = uids, log_time_offsets = alogoffset, datadir=params.EYELOGDATAFOLDER,
                                prune_length = None,
                                aoifile = "./customData/splav.aoi",
-                               require_valid_segs = False, auto_partition_low_quality_segments = True,
+                               require_valid_segs = False, auto_partition_low_quality_segments = False,
                                rpsfile = None)
-    print
+
     ######
 
     if params.DEBUG or params.VERBOSE == "VERBOSE":

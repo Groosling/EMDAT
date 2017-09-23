@@ -35,8 +35,8 @@ class TobiiV3Recording(Recording):
             for row in reader:
                 if self.participantName != row["ParticipantName"]:
                     continue
-                if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
-                    continue
+                # if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                #     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"]: #ignore data point with no validity information
                     continue
                 pupil_left = EMDAT_core.utils.cast_float(row["PupilLeft"], -1)
@@ -76,8 +76,8 @@ class TobiiV3Recording(Recording):
             for row in reader:
                 if self.participantName != row["ParticipantName"]:
                     continue
-                if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
-                    continue
+                # if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                #     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"] or not row["FixationPointX (MCSpx)"] or not row["FixationPointY (MCSpx)"]: #ignore data point with no information
                     continue
                 if row["GazeEventType"] != "Fixation" or currentfix == row["FixationIndex"]: #if not a fixation or the current fixation
@@ -119,8 +119,8 @@ class TobiiV3Recording(Recording):
             for row in reader:
                 if self.participantName != row["ParticipantName"]:
                     continue
-                if row["MediaName"] != 'ScreenRec' or not row["EyeTrackerTimestamp"]:  # ignore non-recording data point
-                    continue
+                # if row["MediaName"] != 'ScreenRec' or not row["EyeTrackerTimestamp"]:  # ignore non-recording data point
+                #     continue
                     
                 if in_fixation:
                     if row["GazeEventType"] == "Fixation":
@@ -220,8 +220,8 @@ class TobiiV3Recording(Recording):
             for row in reader:
                 if self.participantName != row["ParticipantName"]:
                     continue
-                if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
-                    continue
+                # if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                #     continue
                 if row["MouseEventIndex"] : #mouse event
                     data = {"timestamp": EMDAT_core.utils.cast_int(row["RecordingTimestamp"]),
                         "event": row["MouseEvent"]+"MouseClick",

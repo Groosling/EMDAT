@@ -24,6 +24,7 @@ from EMDAT_eyetracker.TobiiV2Recording import TobiiV2Recording
 from EMDAT_eyetracker.TobiiV3Recording import TobiiV3Recording
 from EMDAT_eyetracker.SMIRecording import SMIRecording
 
+import sys
 
 class BasicParticipant(Participant):
     """
@@ -113,9 +114,9 @@ class BasicParticipant(Participant):
         if params.VERBOSE != "QUIET":
             print "Generating features..."
 			
-        self.segments, self.scenes = rec.process_rec(scenelist = scenelist,aoilist = aois,prune_length = prune_length, require_valid_segs = require_valid_segs, 
+        self.segments, self.scenes = rec.process_rec(scenelist = scenelist,aoilist = aois,prune_length = prune_length, require_valid_segs = require_valid_segs,
                                                      auto_partition_low_quality_segments = auto_partition_low_quality_segments, rpsdata = rpsdata, export_pupilinfo=export_pupilinfo)
-        
+
         all_segs = sorted(self.segments, key=lambda x: x.start)
         self.whole_scene = Scene(str(pid)+'_allsc',[],rec.all_data,rec.fix_data, saccade_data = rec.sac_data, event_data = rec.event_data, Segments = all_segs, aoilist = aois,prune_length = prune_length, require_valid = require_valid_segs, export_pupilinfo=export_pupilinfo )
         self.scenes.insert(0,self.whole_scene)
