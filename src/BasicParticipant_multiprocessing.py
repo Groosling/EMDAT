@@ -131,7 +131,7 @@ class BasicParticipant(Participant):
 
 			
 def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, aoifile = None, log_time_offsets=None, 
-                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False):
+                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False, taskId="1"):
     """Generates list of Participant objects. Relevant information is read from input files
     
     Args:
@@ -192,11 +192,11 @@ def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, ao
             sacfile = None
             segfile = datadir+'/P'+str(rec)+'.seg'
         elif params.EYETRACKERTYPE == "TobiiV3":
-            allfile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
-            fixfile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
-            sacfile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
-            evefile = "{dir}/Data_Export.tsv".format(dir=datadir, rec=rec)
-            segfile = "{dir}/TobiiV3_sample.seg".format(dir=datadir, rec=rec)
+            allfile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            fixfile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            sacfile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            evefile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            segfile = "{dir}/TobiiV3_sample.seg".format(dir=datadir, taskId=taskId)
         elif params.EYETRACKERTYPE == "SMI":
             allfile = "{dir}/SMI_Sample_{rec}_Samples.txt".format(dir=datadir, rec=rec)
             fixfile = "{dir}/SMI_Sample_{rec}_Events.txt".format(dir=datadir, rec=rec)
@@ -215,7 +215,7 @@ def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, ao
     return
 			
 def read_participants_Basic_multiprocessing(nbprocesses, datadir, user_list, pids, prune_length = None, aoifile = None, log_time_offsets = None, 
-                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False):
+                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False, taskId="1"):
     """Generates list of Participant objects in parallel computing. Relevant information is read from input files
     
     Args:
@@ -275,10 +275,10 @@ def read_participants_Basic_multiprocessing(nbprocesses, datadir, user_list, pid
         for i in range(0, nbprocesses):
             if log_time_offsets is None:
 			    p = Process(target=read_participants_Basic, args=(q, datadir, user_listsplit[i], pidssplit[i], prune_length, aoifile, log_time_offsets, 
-                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo))
+                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo, taskId))
             else:
 			    p = Process(target=read_participants_Basic, args=(q, datadir, user_listsplit[i], pidssplit[i], prune_length, aoifile, log_time_offsets_list[i], 
-                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo))
+                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo, taskId))
 						  
             listprocess.append(p)
             p.start() # start the process

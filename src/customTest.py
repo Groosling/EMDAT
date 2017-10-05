@@ -20,9 +20,9 @@ if __name__ == '__main__':
     if len(sys.argv) < 2 :
         print ("No participants selected for feature extraction")
         exit(1)
-
-    ul =  sys.argv[1:]
-    uids = sys.argv[1:]
+    taskId = sys.argv[1]
+    ul =  sys.argv[2:]
+    uids = sys.argv[2:]
 
     alogoffset = [0] * len(sys.argv[1:])
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
                                prune_length = None,
                                aoifile = "./data/allData/aois.aoi",
                                require_valid_segs = False, auto_partition_low_quality_segments = False,
-                               rpsfile = None)
+                               rpsfile = None, taskId=taskId)
 
     ######
 
