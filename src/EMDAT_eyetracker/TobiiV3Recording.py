@@ -121,7 +121,7 @@ class TobiiV3Recording(Recording):
                     continue
                 # if row["MediaName"] != 'ScreenRec' or not row["EyeTrackerTimestamp"]:  # ignore non-recording data point
                 #     continue
-                    
+
                 if in_fixation:
                     if row["GazeEventType"] == "Fixation":
                         nb_invalid_temp = 0
@@ -136,7 +136,10 @@ class TobiiV3Recording(Recording):
                         if (EMDAT_core.utils.cast_int(row["ValidityLeft"])<2 or EMDAT_core.utils.cast_int(row["ValidityRight"])<2) and row["GazePointX (ADCSpx)"] and row["GazePointY (ADCSpx)"]: #ignore data point with no valid data
                             saccade_vect.append( [EMDAT_core.utils.cast_int(row["RecordingTimestamp"]), EMDAT_core.utils.cast_int(row["GazePointX (ADCSpx)"]), EMDAT_core.utils.cast_int(row["GazePointY (ADCSpx)"])] )
                             nb_valid_sample += 1
-                        
+                        try:
+                            last_valid
+                        except:
+                            last_valid = False
                         if last_valid:
                             nb_valid_sample += 1
                             
@@ -228,6 +231,8 @@ class TobiiV3Recording(Recording):
                         "x_coord": EMDAT_core.utils.cast_int(row["MouseEventX (MCSpx)"]),
                         "y_coord": EMDAT_core.utils.cast_int(row["MouseEventY (MCSpx)"])
                         }
+                    if data["x_coord"] == None or data ["y_coord"] == None:
+                        continue
                     all_event.append(Event(data, self.media_offset))
                 elif row["KeyPressEventIndex"] : #keyboard event
                     data = {"timestamp": EMDAT_core.utils.cast_int(row["RecordingTimestamp"]),
