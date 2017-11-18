@@ -24,7 +24,7 @@ if __name__ == '__main__':
     ul =  sys.argv[2:]
     uids = sys.argv[2:]
 
-    alogoffset = [0] * len(sys.argv[1:])
+    alogoffset = [0] * len(sys.argv[2:])
 
     ###### Read participants
     nbprocess = 1

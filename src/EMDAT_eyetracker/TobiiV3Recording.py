@@ -240,5 +240,6 @@ class TobiiV3Recording(Recording):
                         "key_name": row["KeyPressEvent"]
                         }
                     all_event.append(Event(data, self.media_offset))
-
+        if not all_event :
+            all_event.append(Event({}, self.media_offset))
         return all_event
