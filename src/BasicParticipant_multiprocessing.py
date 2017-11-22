@@ -24,6 +24,7 @@ from EMDAT_eyetracker.TobiiV2Recording import TobiiV2Recording
 from EMDAT_eyetracker.TobiiV3Recording import TobiiV3Recording
 from EMDAT_eyetracker.SMIRecording import SMIRecording
 
+import sys
 
 class BasicParticipant(Participant):
     """
@@ -85,9 +86,9 @@ class BasicParticipant(Participant):
 		    	
         self.features={}
         if params.EYETRACKERTYPE == "TobiiV2":
-            rec = TobiiRecording(datafile, fixfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
+            rec = TobiiV2Recording(datafile, fixfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         elif params.EYETRACKERTYPE == "TobiiV3":
-            rec = TobiiV3Recording(datafile, fixfile, saccade_file=saccfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
+            rec = TobiiV3Recording(datafile, fixfile, participantName=self.pid, saccade_file=saccfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         elif params.EYETRACKERTYPE == "SMI":
             rec = SMIRecording(datafile, fixfile, saccade_file=saccfile, event_file=eventfile, media_offset=params.MEDIA_OFFSET)
         else:
@@ -102,6 +103,9 @@ class BasicParticipant(Participant):
 			
         if aoifile is not None:
             aois = read_aois(aoifile)
+            params.aoinames = []
+            for aoi in aois:
+                params.aoinames.append(aoi.aid)
         else:
             aois = None
         
@@ -110,9 +114,9 @@ class BasicParticipant(Participant):
         if params.VERBOSE != "QUIET":
             print "Generating features..."
 			
-        self.segments, self.scenes = rec.process_rec(scenelist = scenelist,aoilist = aois,prune_length = prune_length, require_valid_segs = require_valid_segs, 
+        self.segments, self.scenes = rec.process_rec(scenelist = scenelist,aoilist = aois,prune_length = prune_length, require_valid_segs = require_valid_segs,
                                                      auto_partition_low_quality_segments = auto_partition_low_quality_segments, rpsdata = rpsdata, export_pupilinfo=export_pupilinfo)
-        
+
         all_segs = sorted(self.segments, key=lambda x: x.start)
         self.whole_scene = Scene(str(pid)+'_allsc',[],rec.all_data,rec.fix_data, saccade_data = rec.sac_data, event_data = rec.event_data, Segments = all_segs, aoilist = aois,prune_length = prune_length, require_valid = require_valid_segs, export_pupilinfo=export_pupilinfo )
         self.scenes.insert(0,self.whole_scene)
@@ -127,7 +131,7 @@ class BasicParticipant(Participant):
 
 			
 def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, aoifile = None, log_time_offsets=None, 
-                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False):
+                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False, taskId="1"):
     """Generates list of Participant objects. Relevant information is read from input files
     
     Args:
@@ -188,11 +192,11 @@ def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, ao
             sacfile = None
             segfile = datadir+'/P'+str(rec)+'.seg'
         elif params.EYETRACKERTYPE == "TobiiV3":
-            allfile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            fixfile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            sacfile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            evefile = "{dir}/P{rec}_Data_Export.tsv".format(dir=datadir, rec=rec)
-            segfile = "{dir}/TobiiV3_sample_{rec}.seg".format(dir=datadir, rec=rec)
+            allfile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            fixfile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            sacfile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            evefile = "{dir}/{taskId}_Data_Export.tsv".format(dir=datadir, taskId=taskId)
+            segfile = "{dir}/TobiiV3_sample.seg".format(dir=datadir, taskId=taskId)
         elif params.EYETRACKERTYPE == "SMI":
             allfile = "{dir}/SMI_Sample_{rec}_Samples.txt".format(dir=datadir, rec=rec)
             fixfile = "{dir}/SMI_Sample_{rec}_Events.txt".format(dir=datadir, rec=rec)
@@ -201,7 +205,7 @@ def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, ao
             segfile = "{dir}/SMI_Sample_{rec}.seg".format(dir=datadir, rec=rec)
 
         if os.path.exists(allfile):
-            p = BasicParticipant(rec, evefile, allfile, fixfile, sacfile, segfile, log_time_offset = offset, 
+            p = BasicParticipant(rec, evefile, allfile, fixfile, sacfile, segfile, log_time_offset = offset,
                                 aoifile=aoifile, prune_length = prune_length, require_valid_segs = require_valid_segs,
                                 auto_partition_low_quality_segments = auto_partition_low_quality_segments, rpsdata = currpsdata)
             participants.append(p)
@@ -211,7 +215,7 @@ def read_participants_Basic(q, datadir, user_list, pids, prune_length = None, ao
     return
 			
 def read_participants_Basic_multiprocessing(nbprocesses, datadir, user_list, pids, prune_length = None, aoifile = None, log_time_offsets = None, 
-                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False):
+                          require_valid_segs = True, auto_partition_low_quality_segments = False, rpsfile = None, export_pupilinfo = False, taskId="1"):
     """Generates list of Participant objects in parallel computing. Relevant information is read from input files
     
     Args:
@@ -271,10 +275,10 @@ def read_participants_Basic_multiprocessing(nbprocesses, datadir, user_list, pid
         for i in range(0, nbprocesses):
             if log_time_offsets is None:
 			    p = Process(target=read_participants_Basic, args=(q, datadir, user_listsplit[i], pidssplit[i], prune_length, aoifile, log_time_offsets, 
-                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo))
+                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo, taskId))
             else:
 			    p = Process(target=read_participants_Basic, args=(q, datadir, user_listsplit[i], pidssplit[i], prune_length, aoifile, log_time_offsets_list[i], 
-                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo))
+                          require_valid_segs, auto_partition_low_quality_segments, rpsfile, export_pupilinfo, taskId))
 						  
             listprocess.append(p)
             p.start() # start the process

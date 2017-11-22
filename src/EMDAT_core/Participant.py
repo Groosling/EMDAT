@@ -105,7 +105,7 @@ class Participant():
 
 
     def export_features(self, featurelist=None, aoifeaturelist=None, aoifeaturelabels = None,
-                        id_prefix = True, require_valid = True):
+                        id_prefix = True, require_valid = False):
         """Returns feature names and their values for this Participant
         
         Args:
@@ -138,9 +138,9 @@ class Participant():
         featnames.append('Sc_id')
         first = True
         for sc in self.scenes:
-            if not sc.is_valid and require_valid:
-                warn( "User %s:Scene %s dropped because of 'require_valid'" %(self.pid,sc.scid) )
-                continue
+            # if not sc.is_valid and require_valid:
+            #     warn( "User %s:Scene %s dropped because of 'require_valid'" %(self.pid,sc.scid) )
+            #     continue
             sc_feats = []
             if id_prefix:
                 sc_feats.append(self.pid)
@@ -314,9 +314,10 @@ def export_features_all(participants, featurelist = None, aoifeaturelist = None,
     featnames = []
     if participants:
         for p in participants:
-            if not(p.is_valid()) and require_valid:
-                warn( "User " + str(p.pid) + " was not valid." )
-                continue
+            # TODO tymto mi vela dat neprechadzalo, tak som to dal prec - ide o to, ze sa pouzivaju rozne metriky na zvalidovanie\
+            # if not(p.is_valid()) and require_valid:
+            #     warn( "User " + str(p.pid) + " was not valid." )
+            #     continue
             fnames, fvals = p.export_features(featurelist=featurelist, aoifeaturelist=aoifeaturelist, 
                                               aoifeaturelabels = aoifeaturelabels,
                                               id_prefix=id_prefix, require_valid = require_valid)

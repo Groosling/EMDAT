@@ -33,8 +33,10 @@ class TobiiV3Recording(Recording):
             last_time = -1
 			
             for row in reader:
-                if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                if self.participantName != row["ParticipantName"]:
                     continue
+                # if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                #     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"]: #ignore data point with no validity information
                     continue
                 pupil_left = EMDAT_core.utils.cast_float(row["PupilLeft"], -1)
@@ -72,8 +74,10 @@ class TobiiV3Recording(Recording):
             currentfix = 0
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
-                if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                if self.participantName != row["ParticipantName"]:
                     continue
+                # if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                #     continue
                 if not row["ValidityLeft"] or not row["ValidityRight"] or not row["FixationPointX (MCSpx)"] or not row["FixationPointY (MCSpx)"]: #ignore data point with no information
                     continue
                 if row["GazeEventType"] != "Fixation" or currentfix == row["FixationIndex"]: #if not a fixation or the current fixation
@@ -113,9 +117,11 @@ class TobiiV3Recording(Recording):
             nb_sample = 0
             
             for row in reader:
-                if row["MediaName"] != 'ScreenRec' or not row["EyeTrackerTimestamp"]:  # ignore non-recording data point
+                if self.participantName != row["ParticipantName"]:
                     continue
-                    
+                # if row["MediaName"] != 'ScreenRec' or not row["EyeTrackerTimestamp"]:  # ignore non-recording data point
+                #     continue
+
                 if in_fixation:
                     if row["GazeEventType"] == "Fixation":
                         nb_invalid_temp = 0
@@ -130,7 +136,10 @@ class TobiiV3Recording(Recording):
                         if (EMDAT_core.utils.cast_int(row["ValidityLeft"])<2 or EMDAT_core.utils.cast_int(row["ValidityRight"])<2) and row["GazePointX (ADCSpx)"] and row["GazePointY (ADCSpx)"]: #ignore data point with no valid data
                             saccade_vect.append( [EMDAT_core.utils.cast_int(row["RecordingTimestamp"]), EMDAT_core.utils.cast_int(row["GazePointX (ADCSpx)"]), EMDAT_core.utils.cast_int(row["GazePointY (ADCSpx)"])] )
                             nb_valid_sample += 1
-                        
+                        try:
+                            last_valid
+                        except:
+                            last_valid = False
                         if last_valid:
                             nb_valid_sample += 1
                             
@@ -212,14 +221,18 @@ class TobiiV3Recording(Recording):
         with open(event_file, 'r') as f:
             reader = csv.DictReader(f, delimiter='\t')
             for row in reader:
-                if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                if self.participantName != row["ParticipantName"]:
                     continue
+                # if row["MediaName"] != 'ScreenRec':  # ignore non-recording data point
+                #     continue
                 if row["MouseEventIndex"] : #mouse event
                     data = {"timestamp": EMDAT_core.utils.cast_int(row["RecordingTimestamp"]),
                         "event": row["MouseEvent"]+"MouseClick",
                         "x_coord": EMDAT_core.utils.cast_int(row["MouseEventX (MCSpx)"]),
                         "y_coord": EMDAT_core.utils.cast_int(row["MouseEventY (MCSpx)"])
                         }
+                    if data["x_coord"] == None or data ["y_coord"] == None:
+                        continue
                     all_event.append(Event(data, self.media_offset))
                 elif row["KeyPressEventIndex"] : #keyboard event
                     data = {"timestamp": EMDAT_core.utils.cast_int(row["RecordingTimestamp"]),
@@ -227,5 +240,6 @@ class TobiiV3Recording(Recording):
                         "key_name": row["KeyPressEvent"]
                         }
                     all_event.append(Event(data, self.media_offset))
-
+        if not all_event :
+            all_event.append(Event({}, self.media_offset))
         return all_event
