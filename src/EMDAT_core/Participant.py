@@ -22,7 +22,7 @@ class Participant():
     """
 
     def __init__(self, pid, eventfile, datafile, fixfile, segfile, saccfile, log_time_offset = None, aoifile = None, prune_length= None, 
-                 require_valid_segs = True, auto_partition_low_quality_segments = False, rpsdata = None):
+                 require_valid_segs = True, auto_partition_low_quality_segments = False, rpsdata = None, pupilSize = None):
         """Inits BasicParticipant class
         Args:
             pid: Participant id

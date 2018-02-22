@@ -14,6 +14,15 @@ from EMDAT_core.Participant import export_features_all, write_features_tsv
 from EMDAT_core.ValidityProcessing import output_Validity_info_Segments, output_percent_discarded, output_Validity_info_Participants
 import sys
 
+def loadRspFile():
+    """ Load default pupil sizes of participants """
+    with open('data/allData/pupilSizes.tsv', 'r') as tsv:
+        pupilSizes = dict([line.strip().split('\t') for line in tsv])
+
+        for key in pupilSizes:
+            pupilSizes[key] = float(pupilSizes[key])
+    return pupilSizes
+
 if __name__ == '__main__':
 
     freeze_support() #for windows
@@ -26,13 +35,15 @@ if __name__ == '__main__':
 
     alogoffset = [0] * len(sys.argv[2:])
 
+    pupilSizes = loadRspFile()
+
     ###### Read participants
     nbprocess = 1
     ps = read_participants_Basic_multiprocessing(nbprocess, user_list = ul,pids = uids, log_time_offsets = alogoffset, datadir=params.EYELOGDATAFOLDER,
                                prune_length = None,
                                aoifile = "./data/allData/aois.aoi",
                                require_valid_segs = False, auto_partition_low_quality_segments = False,
-                               rpsfile = None, taskId=taskId)
+                               rpsfile = None, taskId=taskId, pupilSizes=pupilSizes)
 
     ######
 
